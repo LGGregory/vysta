@@ -8,20 +8,9 @@ import boto3
 import os.path
 import subprocess
 #as3 = async aioboto3.client('s3')
-print("what")
-print(__name__)
-
-if __name__ == "main":
- print("Starting")
- s3 = boto3.client('s3')
- bucket = 'vystastreams'
- camera = PiCamera()
- camera.resolution = (480,320)
- main(camera, 6, s3, bucket)
 
 def uploadThread( client, target, name, bucket):
  client.upload_file(name, bucket, target)
-
 
 def main(camera, buffersize, s3, bucket):
  x = 1
@@ -35,7 +24,6 @@ def main(camera, buffersize, s3, bucket):
  print("Recording " + name +  " complete.")
 
  while True:
-
   name='/home/pi/streams/'+str(x)
   print("Recording " + name )
   print("Converting" + lastname)
@@ -46,14 +34,18 @@ def main(camera, buffersize, s3, bucket):
   camera.stop_recording()
   print("Recording complete.")
 # camera.stop_preview()
-
   print("Uploading " + str(y) + ".mp4")
   threading.Thread(target=uploadThread, args=(client,lastname[-1:]+".mp4", lastname+".mp4", bucket))
-#  thread.start_new_thread(uploadThread, (client,lastname[-1:]+".mp4",lastname+".mp4",bucket))
 #    s3.upload_file(lastname + '.mp4', bucket, str(y) + '.mp4')
   print("Upload complete.")
-
   y = x
   x=(x+1) % buffersize
   lastname = name
 
+if __name__ == "main":
+ print("Starting")
+ s3 = boto3.client('s3')
+ bucket = 'vystastreams'
+ camera = PiCamera()
+ camera.resolution = (480,320)
+ main(camera, 6, s3, bucket)
