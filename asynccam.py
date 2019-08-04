@@ -30,13 +30,21 @@ def main(camera, buffersize, s3, bucket):
   print("Recording " + name )
   print("Converting" + lastname)
 #  camera.start_preview()
+
+  # Start recording 1 second.
   camera.start_recording(name + '.h264')
-  subprocess.Popen("MP4Box -quiet -add " + lastname + ".h264 " + lastname +".mp4", shell=True)
+  # Send uploading to a thread
+  threading.Thread(target=uploadThread, args=(s3,"v1/"+lastname[-1:]+".h264", lastname+".h264", bucket)).start()
+
+ # converting on the pi is too slow = mp4 files are too big
+ # subprocess.Popen("MP4Box -quiet -add " + lastname + ".h264 " + lastname +".mp4", shell=True)
+
+  #end recording. thread will continue as needed.
   sleep(1)
   camera.stop_recording()
   print("Recording complete.")
 # camera.stop_preview()
-  threading.Thread(target=uploadThread, args=(s3,lastname[-1:]+".mp4", lastname+".mp4", bucket)).start()
+  
 #    s3.upload_file(lastname + '.mp4', bucket, str(y) + '.mp4')
   y = x
   x=(x+1) % buffersize
@@ -48,4 +56,4 @@ bucket = 'vystastreams'
 camera = PiCamera()
 camera.resolution = (480,320)
 camera.vflip = True
-main(camera, 6, s3, bucket)
+main(camera, 9, s3, bucket)
