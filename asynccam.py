@@ -56,4 +56,4 @@ bucket = 'vystastreams'
 camera = PiCamera()
 camera.resolution = (480,320)
 camera.vflip = True
-main(camera, 9, s3, bucket)
+main(camera, 10, s3, bucket)
