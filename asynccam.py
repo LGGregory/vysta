@@ -10,28 +10,30 @@ import subprocess
 #as3 = async aioboto3.client('s3')
 
 def uploadThread( client, target, name, bucket):
- print("Beginning upload of " + target)
+# print("Beginning upload of " + target)
  client.upload_file(name, bucket, target)
- print("Upload of " + name + " comeplete.")
+# print("Upload of " + name + " comeplete.")
+
+delay=2
 
 def main(camera, buffersize, s3, bucket):
  x = 1
  y = 0
  name='/home/pi/streams/'+str(0)
- print("Recording" + name)
+# print("Recording" + name)
  lastname=name
  camera.start_recording(name + '.h264')
- sleep(1)
+ sleep(delay)
  camera.stop_recording()
- print("Recording " + name +  " complete.")
+# print("Recording " + name +  " complete.")
 
  while True:
   name='/home/pi/streams/'+str(x)
-  print("Recording " + name )
-  print("Converting" + lastname)
+#  print("Recording " + name )
+#  print("Converting" + lastname)
 #  camera.start_preview()
 
-  # Start recording 1 second.
+  # Start recording
   camera.start_recording(name + '.h264')
   # Send uploading to a thread
   threading.Thread(target=uploadThread, args=(s3,"v1/"+lastname[-1:]+".h264", lastname+".h264", bucket)).start()
@@ -40,9 +42,9 @@ def main(camera, buffersize, s3, bucket):
  # subprocess.Popen("MP4Box -quiet -add " + lastname + ".h264 " + lastname +".mp4", shell=True)
 
   #end recording. thread will continue as needed.
-  sleep(1)
+  sleep(2)
   camera.stop_recording()
-  print("Recording complete.")
+#  print("Recording complete.")
 # camera.stop_preview()
   
 #    s3.upload_file(lastname + '.mp4', bucket, str(y) + '.mp4')
@@ -54,6 +56,6 @@ print("Starting")
 s3 = boto3.client('s3')
 bucket = 'vystastreams'
 camera = PiCamera()
-camera.resolution = (480,320)
+camera.resolution = (560,420)
 camera.vflip = True
 main(camera, 10, s3, bucket)
