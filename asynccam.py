@@ -1,8 +1,8 @@
 from picamera import PiCamera
 from time import sleep
 import threading
-import asyncio
-import aioboto3
+#import asyncio
+#import aioboto3
 import boto3
 
 import os.path
@@ -53,7 +53,7 @@ def main(camera, buffersize, s3, bucket):
   lastname = name
 
 print("Starting")
-s3 = boto3.client('s3')
+s3 = boto3.client('s3', aws_access_key_id='AKIAZ4JB4F4YVFJZWYXF',aws_secret_access_key='AZLT8a37FLdb83Svk2fLYCEGfaz7IhdkXhReOzpFQ')
 bucket = 'vystastreams'
 camera = PiCamera()
 camera.resolution = (560,420)
